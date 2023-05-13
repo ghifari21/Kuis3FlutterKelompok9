@@ -25,19 +25,3 @@ class DetailUmkm {
         required this.jumlahPinjamanSukses}
       );
 }
-
-class JenisPeminjaman {
-  String id;
-  String nama;
-
-  JenisPeminjaman({required this.id, required this.nama});
-}
-
-class DetailJenisPeminjaman {
-  String id;
-  String nama;
-  String bunga;
-  String isSyariah;
-
-  DetailJenisPeminjaman({required this.id, required this.nama, required this.bunga, required this.isSyariah});
-}
