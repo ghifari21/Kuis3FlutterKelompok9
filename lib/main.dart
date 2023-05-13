@@ -1,115 +1,136 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:kuis3flutterkelompok9/detail.dart';
+import 'models.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class UmkmCubit extends Cubit<UmkmModel> {
+  String url = "http://178.128.17.76:8000/daftar_umkm";
 
-  // This widget is the root of your application.
+  UmkmCubit() : super(UmkmModel(listUmkm: []));
+
+  void setFromJson(Map<String, dynamic> json) {
+    List<UmkmData> listData = <UmkmData>[];
+    var data = json['data'];
+    for (var val in data) {
+      listData
+          .add(UmkmData(id: val['id'], nama: val['nama'], jenis: val['jenis']));
+    }
+    emit(UmkmModel(listUmkm: listData));
+  }
+
+  void fetchData() async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      setFromJson(jsonDecode(response.body));
+    } else {
+      throw Exception("gagal load");
+    }
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => UmkmCubit(),
+        ),
+        BlocProvider(
+          create: (context) => DetailCubit(),
+        )
+      ],
+      child: const MaterialApp(
+        title: "My App",
+        home: HalamanUtama(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class HalamanUtama extends StatelessWidget {
+  const HalamanUtama({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        title: const Center(
+          child: Text('My App'),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+                "2000952, Ghifari Octaverin; 2003623, Alief Muhammad Abdillah; Saya berjanji tidak akan berbuat curang data atau membantu orang lain berbuat curang"),
+          ),
+          BlocBuilder<UmkmCubit, UmkmModel>(
+            builder: (context, umkm) {
+              return Column(
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<UmkmCubit>().fetchData();
+                    },
+                    child: const Text("Reload Daftar Umkm"),
+                  ),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: umkm.listUmkm.length,
+                    itemBuilder: (context, index) {
+                      var imageUrl = "";
+                      if (umkm.listUmkm[index].jenis == "makanan/minuman") {
+                        imageUrl =
+                        'https://upload.wikimedia.org/wikipedia/commons/c/ca/Warung_Tegal_di_Kota_Tegal.JPG';
+                      } else if (umkm.listUmkm[index].jenis == "sembako") {
+                        imageUrl =
+                        'https://radarpekalongan.id/wp-content/uploads/2023/01/toko-sembako-1536x1152.jpg';
+                      } else if (umkm.listUmkm[index].jenis == "jasa") {
+                        imageUrl =
+                        'https://cdn.popmama.com/content-images/post/20230304/tugas-61-aktivitas-ekonomi-bidang-jasajpg-71c31296a7dbe822f05bc24fa14f52ed.jpg';
+                      } else {
+                        imageUrl =
+                        'https://1.bp.blogspot.com/-qbxGYU9b6GE/YVKvjTJ-czI/AAAAAAAAMPk/LNsEZaK3XHEPQ2rEZ2OeqFrWRC_MVwUgACLcBGAsYHQ/w400-h266/Desain-Interior-Toko-Baju.jpg';
+                      }
+                      return Card(
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return DetailInterface(paramId: umkm.listUmkm[index].id);
+                            }));
+                          },
+                          leading: Image.network(imageUrl, fit: BoxFit.contain, width: 50,),
+                          trailing: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.more_vert),
+                          ),
+                          title: Text(umkm.listUmkm[index].nama),
+                          subtitle: Text(umkm.listUmkm[index].jenis),
+                          tileColor: Colors.white70,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

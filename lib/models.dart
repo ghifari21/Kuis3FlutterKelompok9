@@ -1,9 +1,15 @@
-class Umkm {
+class UmkmData {
   String id;
   String nama;
   String jenis;
 
-  Umkm({required this.id, required this.nama, required this.jenis});
+  UmkmData({required this.id, required this.nama, required this.jenis});
+}
+
+class UmkmModel {
+  List<UmkmData> listUmkm = <UmkmData>[];
+
+  UmkmModel({required this.listUmkm});
 }
 
 class DetailUmkm {
@@ -24,20 +30,4 @@ class DetailUmkm {
         required this.memberSejak,
         required this.jumlahPinjamanSukses}
       );
-}
-
-class JenisPeminjaman {
-  String id;
-  String nama;
-
-  JenisPeminjaman({required this.id, required this.nama});
-}
-
-class DetailJenisPeminjaman {
-  String id;
-  String nama;
-  String bunga;
-  String isSyariah;
-
-  DetailJenisPeminjaman({required this.id, required this.nama, required this.bunga, required this.isSyariah});
 }

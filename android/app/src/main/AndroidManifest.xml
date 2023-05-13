@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kelompok9.kuis3flutterkelompok9">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
    <application
         android:label="kuis3flutterkelompok9"
         android:name="${applicationName}"
