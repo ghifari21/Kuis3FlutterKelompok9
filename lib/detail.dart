@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -6,7 +7,7 @@ import 'dart:developer' as developer;
 import 'models.dart';
 
 class DetailCubit extends Cubit<DetailUmkm> {
-  String url = "http://178.128.17.76:8000/detil_umkm/1";
+  String url = "http://178.128.17.76:8000/detil_umkm";
   DetailCubit()
       : super(DetailUmkm(
             id: "",
@@ -18,7 +19,6 @@ class DetailCubit extends Cubit<DetailUmkm> {
             jumlahPinjamanSukses: ""));
 
   void setFromJson(Map<String, dynamic> json) {
-    print("id");
     emit(DetailUmkm(
         id: json['id'],
         nama: json['nama'],
@@ -30,7 +30,7 @@ class DetailCubit extends Cubit<DetailUmkm> {
   }
 
   void fetchData(String id) async {
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse("$url/$id"));
     if (response.statusCode == 200) {
       setFromJson(jsonDecode(response.body));
     } else {
@@ -52,7 +52,7 @@ class DetailPage extends StatelessWidget {
     return MaterialApp(
       home: BlocProvider(
         create: (_) => DetailCubit(),
-        child: const DetailInterface(paramId: ''),
+        child: const DetailInterface(paramId: '1'),
       ),
     );
   }
@@ -70,6 +70,7 @@ class DetailInterface extends StatelessWidget {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           BlocBuilder<DetailCubit, DetailUmkm>(
             builder: (context, dataDetail) {
+              context.read<DetailCubit>().fetchData(paramId);
               return Center(
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
