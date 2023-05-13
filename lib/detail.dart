@@ -8,6 +8,7 @@ import 'models.dart';
 
 class DetailCubit extends Cubit<DetailUmkm> {
   String url = "http://178.128.17.76:8000/detil_umkm";
+
   DetailCubit()
       : super(DetailUmkm(
             id: "",
@@ -39,65 +40,59 @@ class DetailCubit extends Cubit<DetailUmkm> {
   }
 }
 
-void main() {
-  runApp(const DetailPage());
-}
-
-class DetailPage extends StatelessWidget {
-  const DetailPage({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: BlocProvider(
-        create: (_) => DetailCubit(),
-        child: const DetailInterface(paramId: '1'),
-      ),
-    );
-  }
-}
-
 class DetailInterface extends StatelessWidget {
   final String paramId;
+
   const DetailInterface({Key? key, required this.paramId}) : super(key: key);
 
   @override
-  Widget build(Object context) {
-    return MaterialApp(
-        home: Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail UMKM'),
+        title: const Center(
+          child: Text('Detail UMKM'),
+        ),
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           BlocBuilder<DetailCubit, DetailUmkm>(
             builder: (context, dataDetail) {
               context.read<DetailCubit>().fetchData(paramId);
-              /* var imageUrl = "";
+
+              var imageUrl = "";
               if (dataDetail.jenis == "makanan/minuman") {
-                imageUrl = "https://img.okezone.com/content/2017/09/11/337/1773600/okezone-files-wajib-tahu-ini-ciri-ciri-warteg-asli-tegal-atau-bukan-Il9HFAsOJj.jpg";
-              }else if (dataDetail.jenis == "sembako"){
-                imageUrl = "https://radarpekalongan.id/wp-content/uploads/2023/01/toko-sembako-1536x1152.jpg";
-              }else if (dataDetail.jenis == "jasa") {
-                imageUrl = "https://www.maxmanroe.com/vid/wp-content/uploads/2019/11/Pengertian-Jasa-Adalah.jpg";
-              }else {
-                imageUrl = "https://cdn-2.tstatic.net/jakarta/foto/bank/images/metro-atom-pasar-baru-2.jpg";
-              } */
+                imageUrl =
+                'https://upload.wikimedia.org/wikipedia/commons/c/ca/Warung_Tegal_di_Kota_Tegal.JPG';
+              } else if (dataDetail.jenis == "sembako") {
+                imageUrl =
+                'https://radarpekalongan.id/wp-content/uploads/2023/01/toko-sembako-1536x1152.jpg';
+              } else if (dataDetail.jenis == "jasa") {
+                imageUrl =
+                'https://cdn.popmama.com/content-images/post/20230304/tugas-61-aktivitas-ekonomi-bidang-jasajpg-71c31296a7dbe822f05bc24fa14f52ed.jpg';
+              } else {
+                imageUrl =
+                'https://1.bp.blogspot.com/-qbxGYU9b6GE/YVKvjTJ-czI/AAAAAAAAMPk/LNsEZaK3XHEPQ2rEZ2OeqFrWRC_MVwUgACLcBGAsYHQ/w400-h266/Desain-Interior-Toko-Baju.jpg';
+              }
+
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /* Image.network(
-                      "https://www.maxmanroe.com/vid/wp-content/uploads/2019/11/Pengertian-Jasa-Adalah.jpg",
-                      height: 500,
+                    Image.network(
+                      imageUrl,
+                      height: 150,
                       fit: BoxFit.cover,
-                    ), */
+                    ),
                     Text(
                       dataDetail.nama,
-                      style:
-                          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 24),
                     Text(
@@ -131,6 +126,6 @@ class DetailInterface extends StatelessWidget {
           ),
         ]),
       ),
-    ));
+    );
   }
 }
