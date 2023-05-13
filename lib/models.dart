@@ -1,9 +1,15 @@
-class Umkm {
+class UmkmData {
   String id;
   String nama;
   String jenis;
 
-  Umkm({required this.id, required this.nama, required this.jenis});
+  UmkmData({required this.id, required this.nama, required this.jenis});
+}
+
+class UmkmModel {
+  List<UmkmData> listUmkm = <UmkmData>[];
+
+  UmkmModel({required this.listUmkm});
 }
 
 class DetailUmkm {
