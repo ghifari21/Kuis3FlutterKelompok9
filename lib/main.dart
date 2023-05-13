@@ -77,7 +77,7 @@ class HalamanUtama extends StatelessWidget {
                       },
                       child: const Text("Reload Daftar Umkm"),
                     ),
-                    const SizedBox(height: 8.0,),
+                    const SizedBox(height: 16.0,),
                     ListView.builder(
                       shrinkWrap: true,
                       itemCount: umkm.listUmkm.length,
@@ -89,7 +89,12 @@ class HalamanUtama extends StatelessWidget {
                             },
                             leading: Image.network(
                                 'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg'),
-                            trailing: const Icon(Icons.more_vert),
+                            trailing: IconButton(
+                              onPressed: () {
+
+                              },
+                              icon: const Icon(Icons.more_vert),
+                            ),
                             title: Text(umkm.listUmkm[index].nama),
                             subtitle: Text(umkm.listUmkm[index].jenis),
                             tileColor: Colors.white70,
